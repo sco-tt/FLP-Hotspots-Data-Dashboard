@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
 
-	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+	  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
@@ -20,41 +20,70 @@
  	<script type="text/javascript" src="http://www.google.com/jsapi"></script>
 	     <script type="text/javascript">
       google.load('visualization', '1');
+ function drawTable() {
+   // Construct query
+   //Query compnents end up in query
+   var query;
+   var baseQuery = 'SELECT "Month", COUNT() FROM "1D7abkHy7QdnOtPkRhDCENIMskH-ujJVXE7UsEceq GROUP BY "Month"';
+var orderPref = document.getElementById('orderPref').value;
+    var queryAddition;
 
-      function drawTable() {
-        // Construct query
-        var query = 'SELECT "Hotspot", COUNT() FROM "1D7abkHy7QdnOtPkRhDCENIMskH-ujJVXE7UsEceq" WHERE "Month" = "06 - Jun" ORDER BY "Hotspot"';
-        var queryText = encodeURIComponent(query);
-        var gvizQuery = new google.visualization.Query(
-            'http://www.google.com/fusiontables/gvizdata?tq='  + queryText);
-		  console.log(queryText);
+     if (orderPref) {
+          queryAddition =  "ORDER BY " + orderPref;
+      }
 
-        // Send query and draw table with data in response
-        gvizQuery.send(function(response) {
-          var numRows = response.getDataTable().getNumberOfRows();
-          var numCols = response.getDataTable().getNumberOfColumns();
+    var query = baseQuery + queryAddition;
+    var queryText = encodeURIComponent(query);
+    var gvizQuery = new google.visualization.Query(
+        'https://www.google.com/fusiontables/gvizdata?tq='  + queryText);
 
-          var ftdata = ['<table><thead><tr>'];
-          for (var i = 0; i < numCols; i++) {
-            var columnTitle = response.getDataTable().getColumnLabel(i);
-            ftdata.push('<th>' + columnTitle + '</th>');
-          }
-          ftdata.push('</tr></thead><tbody>');
-
-          for (var i = 0; i < numRows; i++) {
-            ftdata.push('<tr>');
-            for(var j = 0; j < numCols; j++) {
-              var rowValue = response.getDataTable().getValue(i, j);
-              ftdata.push('<td>' + rowValue + '</td>');
+    // Send query and draw table with data in response
+    gvizQuery.send(function(response) {
+      var numRows = response.getDataTable().getNumberOfRows();
+      var numCols = response.getDataTable().getNumberOfColumns();
+      var ftdata = ['<table class="table table-striped"><thead><tr>'];
+      var sum = 0;
+    for (var i = 1; i < numCols; i++) {
+        ftdata.push('<th>' + 'Hotspot' + '</th>' + '<th>' + 'Patron Count' + '</th>');
+      }
+      ftdata.push('</tr></thead><tbody>');
+    for (var i = 0; i < numRows; i++) {
+    ftdata.push('<tr>');
+        for(var j = 0; j < numCols; j++) {
+          var rowValue = response.getDataTable().getValue(i, j);
+            ftdata.push('<td>' + rowValue + '</td>');
+        }
+      sum += rowValue;
+    //console.log("pass # " + i + " is " + rowValue + ", sum is " + sum);
+    ftdata.push('</tr>');
+      }
+      ftdata.push('</tbody></table>');
+  document.getElementById('yearlyTotal').innerHTML = "Yearly Total: " + sum;  
+  document.getElementById('ft-data').innerHTML = ftdata.join('');
+    });
+     //Call the chart
+   drawVisualization(query); 
+  }
+ function drawVisualization(query, monthName) {
+        google.visualization.drawChart({
+          containerId: 'visualization',
+          dataSourceUrl: 'http://www.google.com/fusiontables/gvizdata?tq=',
+          query: query,
+          chartType: 'LineChart',
+          options: {
+              label: '# of Visits',
+              title: 'Hotspot Usage in 2014',
+            vAxis: {
+              title: 'Hotspot'
+            },
+            hAxis: {
+              title: 'Patron visits'
             }
-            ftdata.push('</tr>');
           }
-          ftdata.push('</tbody></table>');
-          document.getElementById('ft-data').innerHTML = ftdata.join('');
         });
       }
 
-      google.setOnLoadCallback(drawTable);
+  google.setOnLoadCallback(drawTable);  
     </script>   
 
   </head>
@@ -71,30 +100,27 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="/">FLP Hotspots Data Dashboard</a>
+          <a class="navbar-brand" href="/FLP-Hotspots-Data-Dashboard/index.html">FLP Hotspots Data Dashboard</a>
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <li><a href="/monthly.html">Monthly</a></li>
+            <li><a href="/FLP-Hotspots-Data-Dashboard/monthly.html">Monthly</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
     </div>
 	  
 <div class="container" role="main">
-	<h1>Monthly Breakdown</h1>	
-	</h1><label>Month</label>
-      div>
-      <label>Scoring Team:</label>
-      <select id="team" onchange="drawTable();">
-        <option value="" selected="selected">All</option>
-        <option value="Germany">Germany</option>
-        <option value="New Zealand">New Zealand</option>
-        <option value="Uruguay">Uruguay</option>
-      </select>
-    </div>
-    <div id="ft-data"></div>
-	</div>
+
+           <label>Sort By</label>
+        <select id="orderPref" onchange="drawTable()">
+            <option value="'Month'" selected="selected">Month</option>
+            <option value="Count()">Count</option>
+        </select>
+    <h3 id="yearlyTotal"></h3>
+<div id="ft-data"></div>
+<div id="visualization"></div>
+  </div>
 
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
