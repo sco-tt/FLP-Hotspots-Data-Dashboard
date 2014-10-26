@@ -18,133 +18,82 @@
     <![endif]-->
 	<!-- Google Charts API -->
  	<script type="text/javascript" src="http://www.google.com/jsapi"></script>
-	<script>
-		google.load('visualization', '1',{ packages: ['corechart'] });
-  function drawTable() {
-   // Construct query
-   //Query compnents end up in query
-   var query;
-   var baseQuery = 'SELECT "Hotspot", COUNT() FROM "1D7abkHy7QdnOtPkRhDCENIMskH-ujJVXE7UsEceq"';
-var orderPref = document.getElementById('orderPref').value;
-var month = document.getElementById('month');
-var monthValue = month.value;
-var monthName = month[month.selectedIndex].innerHTML;
-      var queryAddition;
-      if (month) {
-          queryAddition = " WHERE 'Month' = '" + monthValue + "'" + " GROUP BY 'Hotspot'";
-      }
-      if (orderPref) {
-          queryAddition +=  "ORDER BY " + orderPref;
-      }
-    var query = baseQuery + queryAddition;
-    var queryText = encodeURIComponent(query);
-    var gvizQuery = new google.visualization.Query(
-        'https://www.google.com/fusiontables/gvizdata?tq='  + queryText);
+	     <script type="text/javascript">
+      google.load('visualization', '1');
 
-    // Send query and draw table with data in response
-    gvizQuery.send(function(response) {
-      var numRows = response.getDataTable().getNumberOfRows();
-      var numCols = response.getDataTable().getNumberOfColumns();
-      var ftdata = ['<table class="table table-striped"><thead><tr>'];
-      for (var i = 1; i < numCols; i++) {
-        ftdata.push('<th>' + 'Hotspot' + '</th>' + '<th>' + 'Patron Count' + '</th>');
-      }
-      ftdata.push('</tr></thead><tbody>');
+      function drawTable() {
+        // Construct query
+        var query = 'SELECT "Hotspot", COUNT() FROM "1D7abkHy7QdnOtPkRhDCENIMskH-ujJVXE7UsEceq" WHERE "Month" = "06 - Jun" ORDER BY "Hotspot"';
+        var queryText = encodeURIComponent(query);
+        var gvizQuery = new google.visualization.Query(
+            'http://www.google.com/fusiontables/gvizdata?tq='  + queryText);
+		  console.log(queryText);
 
-      for (var i = 0; i < numRows; i++) {
-        ftdata.push('<tr>');
-        for(var j = 0; j < numCols; j++) {
-          var rowValue = response.getDataTable().getValue(i, j);
-          ftdata.push('<td>' + rowValue + '</td>'); 
-        }
-         ftdata.push('</tr>');
-      }
-      ftdata.push('</tbody></table>');
-      document.getElementById('ft-data').innerHTML = ftdata.join('');
-    });   
-    //Call the chart
-   drawVisualization(query, monthName); 
-  }
+        // Send query and draw table with data in response
+        gvizQuery.send(function(response) {
+          var numRows = response.getDataTable().getNumberOfRows();
+          var numCols = response.getDataTable().getNumberOfColumns();
 
- function drawVisualization(query, monthName) {
-        google.visualization.drawChart({
-          containerId: 'visualization',
-          dataSourceUrl: 'http://www.google.com/fusiontables/gvizdata?tq=',
-          query: query,
-          chartType: 'BarChart',
-          options: {
-              label: '# of Visits',
-              title: 'Hotspot Usage in ' + monthName + ' 2014',
-            vAxis: {
-              title: 'Hotspot'
-            },
-            hAxis: {
-              title: 'Patron visits'
-            }
+          var ftdata = ['<table><thead><tr>'];
+          for (var i = 0; i < numCols; i++) {
+            var columnTitle = response.getDataTable().getColumnLabel(i);
+            ftdata.push('<th>' + columnTitle + '</th>');
           }
+          ftdata.push('</tr></thead><tbody>');
+
+          for (var i = 0; i < numRows; i++) {
+            ftdata.push('<tr>');
+            for(var j = 0; j < numCols; j++) {
+              var rowValue = response.getDataTable().getValue(i, j);
+              ftdata.push('<td>' + rowValue + '</td>');
+            }
+            ftdata.push('</tr>');
+          }
+          ftdata.push('</tbody></table>');
+          document.getElementById('ft-data').innerHTML = ftdata.join('');
         });
       }
 
-  google.setOnLoadCallback(drawTable);     
-	</script>
+      google.setOnLoadCallback(drawTable);
+    </script>   
+
   </head>
 <body role="document">
 
     <!-- Fixed navbar -->
     <div class="navbar navbar-inverse" role="navigation">
       <div class="container">
-        <div class="navbar-header">
+
+		  <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
             <span class="sr-only">Toggle navigation</span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Bootstrap theme</a>
+          <a class="navbar-brand" href="/">FLP Hotspots Data Dashboard</a>
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <span class="caret"></span></a>
-              <ul class="dropdown-menu" role="menu">
-                <li><a href="#">Action</a></li>
-                <li><a href="#">Another action</a></li>
-                <li><a href="#">Something else here</a></li>
-                <li class="divider"></li>
-                <li class="dropdown-header">Nav header</li>
-                <li><a href="#">Separated link</a></li>
-                <li><a href="#">One more separated link</a></li>
-              </ul>
-            </li>
+            <li><a href="/monthly.html">Monthly</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
     </div>
 	  
 <div class="container" role="main">
-        <div class="notes">Version 6: simplified query tests</div>
-    <label>Month</label>
-      <select id="month" name="month" onchange="drawTable();">
-        <option value="01 - January">January</option>
-        <option value="02 - February">February</option>
-        <option value="03 - March">March</option>
-           <option value="04 - April">Apil</option>
-           <option value="05 - May">May</option>
-           <option value="06 - Jun">June</option>
-           <option value="07 - Jul">July</option>
-          <option value="08 - Aug">August</option>
-          <option value="09 - Sep">September</option>
+	<h1>Monthly Breakdown</h1>	
+	</h1><label>Month</label>
+      div>
+      <label>Scoring Team:</label>
+      <select id="team" onchange="drawTable();">
+        <option value="" selected="selected">All</option>
+        <option value="Germany">Germany</option>
+        <option value="New Zealand">New Zealand</option>
+        <option value="Uruguay">Uruguay</option>
       </select>
-           <label>Sort By</label>
-        <select id="orderPref" onchange="drawTable()">
-            <option value="'Hotspot'" selected="selected">Hotspot</option>
-            <option value="Count()">Count</option>
-        </select>
-<div id="ft-data"></div>
-<div id="visualization"></div>
+    </div>
+    <div id="ft-data"></div>
 	</div>
 
 
