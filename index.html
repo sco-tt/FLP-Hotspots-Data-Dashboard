@@ -18,25 +18,15 @@
     <![endif]-->
 	<!-- Google Charts API -->
  	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
-	     <script type="text/javascript">
-      google.load('visualization', '1');
- function drawTable() {
-   // Construct query
-   //Query compnents end up in query
-   var query;
-   var baseQuery = 'SELECT "Month", COUNT() FROM "1D7abkHy7QdnOtPkRhDCENIMskH-ujJVXE7UsEceq GROUP BY "Month"';
-var orderPref = document.getElementById('orderPref').value;
-    var queryAddition;
-
-     if (orderPref) {
-          queryAddition =  "ORDER BY " + orderPref;
-      }
-
-    var query = baseQuery + queryAddition;
+	<script type="text/javascript">
+    	google.load('visualization', '1');
+		function drawTable() {
+   		// Construct query
+   		//Query compnents end up in query
+   var query = 'SELECT "Month", COUNT() FROM "1D7abkHy7QdnOtPkRhDCENIMskH-ujJVXE7UsEceq GROUP BY "Month" ORDER BY "Month"';
     var queryText = encodeURIComponent(query);
     var gvizQuery = new google.visualization.Query(
         'https://www.google.com/fusiontables/gvizdata?tq='  + queryText);
-
     // Send query and draw table with data in response
     gvizQuery.send(function(response) {
       var numRows = response.getDataTable().getNumberOfRows();
@@ -58,7 +48,7 @@ var orderPref = document.getElementById('orderPref').value;
     ftdata.push('</tr>');
       }
       ftdata.push('</tbody></table>');
-  document.getElementById('yearlyTotal').innerHTML = "Yearly Total: " + sum;  
+  document.getElementById('yearlyTotal').innerHTML = "2014 Yearly Total: " + sum;  
   document.getElementById('ft-data').innerHTML = ftdata.join('');
     });
      //Call the chart
@@ -92,7 +82,6 @@ var orderPref = document.getElementById('orderPref').value;
     <!-- Fixed navbar -->
     <div class="navbar navbar-inverse" role="navigation">
       <div class="container">
-
 		  <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
             <span class="sr-only">Toggle navigation</span>
@@ -105,22 +94,17 @@ var orderPref = document.getElementById('orderPref').value;
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
             <li><a href="/FLP-Hotspots-Data-Dashboard/monthly.html">Monthly</a></li>
+			 <li><a href="/FLP-Hotspots-Data-Dashboard/hotspot.html">By Hotspot</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
     </div>
 	  
-<div class="container" role="main">
-
-           <label>Sort By</label>
-        <select id="orderPref" onchange="drawTable()">
-            <option value="'Month'" selected="selected">Month</option>
-            <option value="Count()">Count</option>
-        </select>
-    <h3 id="yearlyTotal"></h3>
-<div id="ft-data"></div>
-<div id="visualization"></div>
-  </div>
+<div class="container" role="main">      
+	<h3 id="yearlyTotal"></h3>
+	<div id="ft-data"></div>
+	<div id="visualization"></div>
+</div>
 
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->

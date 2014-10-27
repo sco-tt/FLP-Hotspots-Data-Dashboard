@@ -22,7 +22,7 @@
 		google.load('visualization', '1',{ packages: ['corechart'] });
   function drawTable() {
    // Construct query
-   //Query compnents end up in query
+   //Query compnents end up in query var
    var query;
    var baseQuery = 'SELECT "Hotspot", COUNT() FROM "1D7abkHy7QdnOtPkRhDCENIMskH-ujJVXE7UsEceq"';
 var orderPref = document.getElementById('orderPref').value;
@@ -62,7 +62,7 @@ var monthName = month[month.selectedIndex].innerHTML;
 		ftdata.push('</tr>');
       }
       ftdata.push('</tbody></table>');
-	document.getElementById('monthlyTotal').innerHTML = "Monthly Total: " + sum;  
+	document.getElementById('monthlyTotal').innerHTML = monthName + " Monthly Total: " + sum;  
 	document.getElementById('ft-data').innerHTML = ftdata.join('');
     });   
     //Call the chart
@@ -109,13 +109,14 @@ var monthName = month[month.selectedIndex].innerHTML;
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
             <li><a href="/FLP-Hotspots-Data-Dashboard/monthly.html">Monthly</a></li>
+			<li><a href="/FLP-Hotspots-Data-Dashboard/hotspot.html">By Hotspot</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
     </div>
 	  
 <div class="container" role="main">
-	<h1>Monthly Breakdown</h1>	
+	<h1>Monthly Summary</h1>	
 	</h1><label>Month</label>
       <select id="month" name="month" onchange="drawTable();">
         <option value="01 - January">January</option>
