@@ -72,7 +72,7 @@ var monthName = month[month.selectedIndex].innerHTML;
  function drawVisualization(query, monthName) {
         google.visualization.drawChart({
           containerId: 'visualization',
-          dataSourceUrl: 'http://www.google.com/fusiontables/gvizdata?tq=',
+          dataSourceUrl: 'https://www.google.com/fusiontables/gvizdata?tq=',
           query: query,
           chartType: 'BarChart',
           options: {
