@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Free Library of Philadelphia Hotspots Data Dashboard</title>
+
+	<!-- Bootstrap -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+
+	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+	<!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+	<!-- Google Charts API -->
+	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	<script>
+		google.load('visualization', '1', {
+			packages: ['table', 'corechart']
+		});
+		
+			var ftdata = [];
+		function drawTable() {
+			// Query compnents end up in query var
+			var query;
+			var baseQuery = 'SELECT "Month", COUNT() FROM "1D7abkHy7QdnOtPkRhDCENIMskH-ujJVXE7UsEceq"';
+			var month = document.getElementById('month');
+			var monthValue = month.value;
+			var monthName = month[month.selectedIndex].innerHTML;
+			var queryAddition;
+			if (month) {
+				queryAddition = " WHERE 'Hotspot' = '" + monthValue + "'" + " GROUP BY 'Month'";
+			}
+			var query = baseQuery + queryAddition;
+			var queryText = encodeURIComponent(query);
+			var gvizQuery = new google.visualization.Query(
+				'https://www.google.com/fusiontables/gvizdata?tq=' + queryText);
+
+		// Send query and draw table with data in response
+		gvizQuery.send(function(response) {
+			var numRows = response.getDataTable().getNumberOfRows();
+			var numCols = response.getDataTable().getNumberOfColumns();
+			console.log('ft data value is ' + ftdata.length)
+			if (ftdata.length <= 1) {
+				console.log('1st conditional fired');
+				ftdata.push(['Month', monthValue]);
+				for (var i = 0; i < numRows; i++) {
+					for(var j = 0; j < numCols; j++) {
+						var rowValue = response.getDataTable(i,j);
+					}
+					var count = rowValue.tf[i]['c'][1]['v'];
+					var month = rowValue.tf[i]['c'][0]['v'];
+					ftdata.push([month, count])
+				}
+			}
+			else if (ftdata.length > 1) {
+				console.log('2nd conditional fired');
+				for (var i = 0; i < numRows; i++) {
+					for(var j = 0; j < numCols; j++) {
+						rowValue = response.getDataTable(i,j);
+						count = rowValue.tf[i]['c'][1]['v'];
+						month = rowValue.tf[i]['c'][0]['v'];
+					}
+					ftdata[i+1].push(count)
+				}
+				ftdata[0].push(monthValue)
+			} 
+			console.log(ftdata);          
+			drawChart(ftdata);
+	    });   
+	}
+
+function drawChart(ftdata) {
+        var data = google.visualization.arrayToDataTable(ftdata);
+
+        var options = {
+          title: 'Company Performance'
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('visualization'));
+        chart.draw(data, options);
+      
+      }
+
+      		google.setOnLoadCallback(drawTable);
+
+	</script>
+</head>
+
+<body role="document">
+
+	<!-- Fixed navbar -->
+	<div class="navbar navbar-inverse" role="navigation">
+		<div class="container">
+
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="/FLP-Hotspots-Data-Dashboard/index.html">FLP Hotspots Data Dashboard</a>
+			</div>
+			<div class="navbar-collapse collapse">
+				<ul class="nav navbar-nav">
+					<li><a href="/FLP-Hotspots-Data-Dashboard/monthly.html">Monthly</a></li>
+					<li><a href="/FLP-Hotspots-Data-Dashboard/hotspot.html">By Hotspot</a></li>
+					<li><a href="/FLP-Hotspots-Data-Dashboard/compare.html">Compare</a></li>
+				</ul>
+			</div>
+			<!--/.nav-collapse -->
+		</div>
+	</div>
+
+	<div class="container" role="main">
+		<h1>Hotspot Summary</h1>	
+		</h1>
+		<label>Month</label>
+		<select id="month" name="month" onchange="drawTable();">
+			<!-- <option value="">-Select One-</option> -->
+			<option value="KEN">Kensington</option>
+			<!--<option value="JEC">Joseph E. Coleman</option> -->
+
+			<option value="IDAAY">Institute for the Development of African American Youth</option>
+			<option value="MER">Mercy Neighborhood Ministries</option>
+			<option value="WOL">West Oak Lane</option>
+			<option value="BRL">Blackwell Regional Library</option>
+			<option value="NER">Northeast Regional Library</option>
+			<option value="LMB">Lillian Marrero Branch</option>
+			<option value="HH">Heavenly Hall</option>
+			<option value="VOA">Village of the Arts and Humanities</option>
+		</select>
+
+		<h3 id="monthlyTotal"></h3>
+		<div id="visualization"></div>
+		<div id="ft-data"></div>
+	</div>
+
+
+	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+	<!-- 
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+	<!-- <script src="js/bootstrap.min.js"></script>-->
+</body>
+
+</html>
