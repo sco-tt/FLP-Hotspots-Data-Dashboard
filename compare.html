@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -23,81 +22,80 @@
 		google.load('visualization', '1', {
 			packages: ['table', 'corechart']
 		});
+		// Global vars
+		var ftdata = [];
 		
-			var ftdata = [];
+		//Build query and pull out values to build data to send to drawchart()
 		function drawTable() {
-			// Query compnents end up in query var
+			// Build query - compnents end up in "query" varaible
 			var query;
 			var baseQuery = 'SELECT "Month", COUNT() FROM "1D7abkHy7QdnOtPkRhDCENIMskH-ujJVXE7UsEceq"';
-			var month = document.getElementById('month');
-			var monthValue = month.value;
-			var monthName = month[month.selectedIndex].innerHTML;
+			var hotspot = document.getElementById('hotspot');
+			var hotspotValue = hotspot.value;
 			var queryAddition;
-			if (month) {
-				queryAddition = " WHERE 'Hotspot' = '" + monthValue + "'" + " GROUP BY 'Month'";
+			if (hotspot) {
+				queryAddition = " WHERE 'Hotspot' = '" + hotspotValue + "'" + " GROUP BY 'Month'";
 			}
 			var query = baseQuery + queryAddition;
 			var queryText = encodeURIComponent(query);
 			var gvizQuery = new google.visualization.Query(
 				'https://www.google.com/fusiontables/gvizdata?tq=' + queryText);
 
-		// Send query and draw table with data in response
-		gvizQuery.send(function(response) {
-			var numRows = response.getDataTable().getNumberOfRows();
-			var numCols = response.getDataTable().getNumberOfColumns();
-			console.log('ft data value is ' + ftdata.length)
-			if (ftdata.length <= 1) {
-				console.log('1st conditional fired');
-				ftdata.push(['Month', monthValue]);
-				for (var i = 0; i < numRows; i++) {
-					for(var j = 0; j < numCols; j++) {
-						var rowValue = response.getDataTable(i,j);
+		// Send query and format data to send to chart
+			gvizQuery.send(function(response) {
+				var numRows = response.getDataTable().getNumberOfRows();
+				var numCols = response.getDataTable().getNumberOfColumns();
+				// Conditional to determine if this is the first query/line, or if we're adding an additional query/line
+				if (ftdata.length <= 1) {
+					// Debugging conditional
+					// console.log('1st conditional fired');
+					ftdata.push(['Month', hotspotValue]);
+					for (var i = 0; i < numRows; i++) {
+						for (var j = 0; j < numCols; j++) {
+							var rowValue = response.getDataTable(i,j);
+						}
+						var count = rowValue.tf[i]['c'][1]['v'];
+						var month = rowValue.tf[i]['c'][0]['v'];
+						ftdata.push([month, count])
 					}
-					var count = rowValue.tf[i]['c'][1]['v'];
-					var month = rowValue.tf[i]['c'][0]['v'];
-					ftdata.push([month, count])
 				}
+				else if (ftdata.length > 1) {
+					// Debugging conditional
+					// console.log('2nd conditional fired');
+					for (var i = 0; i < numRows; i++) {
+						for(var j = 0; j < numCols; j++) {
+							rowValue = response.getDataTable(i,j);
+							count = rowValue.tf[i]['c'][1]['v'];
+							month = rowValue.tf[i]['c'][0]['v'];
+						}
+						ftdata[i+1].push(count)
+					}
+					ftdata[0].push(hotspotValue)
+				} 
+				// Debug
+				// console.log(ftdata); 
+				
+				//Send formatted data to the visualization	         
+				drawChart(ftdata);
+		    });   
+		}
+
+		function drawChart(ftdata) {
+		    var data = google.visualization.arrayToDataTable(ftdata);
+		        var options = {
+		          title: 'Company Performance'
+		        };
+		        var chart = new google.visualization.LineChart(document.getElementById('visualization'));
+		        chart.draw(data, options);
 			}
-			else if (ftdata.length > 1) {
-				console.log('2nd conditional fired');
-				for (var i = 0; i < numRows; i++) {
-					for(var j = 0; j < numCols; j++) {
-						rowValue = response.getDataTable(i,j);
-						count = rowValue.tf[i]['c'][1]['v'];
-						month = rowValue.tf[i]['c'][0]['v'];
-					}
-					ftdata[i+1].push(count)
-				}
-				ftdata[0].push(monthValue)
-			} 
-			console.log(ftdata);          
-			drawChart(ftdata);
-	    });   
-	}
-
-function drawChart(ftdata) {
-        var data = google.visualization.arrayToDataTable(ftdata);
-
-        var options = {
-          title: 'Company Performance'
-        };
-
-        var chart = new google.visualization.LineChart(document.getElementById('visualization'));
-        chart.draw(data, options);
-      
-      }
-
-      		google.setOnLoadCallback(drawTable);
-
-	</script>
+			google.setOnLoadCallback(drawTable);
+		</script>
 </head>
 
 <body role="document">
-
 	<!-- Fixed navbar -->
 	<div class="navbar navbar-inverse" role="navigation">
 		<div class="container">
-
 			<div class="navbar-header">
 				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
 					<span class="sr-only">Toggle navigation</span>
@@ -122,11 +120,10 @@ function drawChart(ftdata) {
 		<h1>Hotspot Summary</h1>	
 		</h1>
 		<label>Month</label>
-		<select id="month" name="month" onchange="drawTable();">
+		<select id="hotspot" name="hotspot" onchange="drawTable();">
 			<!-- <option value="">-Select One-</option> -->
 			<option value="KEN">Kensington</option>
 			<!--<option value="JEC">Joseph E. Coleman</option> -->
-
 			<option value="IDAAY">Institute for the Development of African American Youth</option>
 			<option value="MER">Mercy Neighborhood Ministries</option>
 			<option value="WOL">West Oak Lane</option>
@@ -149,5 +146,4 @@ function drawChart(ftdata) {
     <!-- Include all compiled plugins (below), or include individual files as needed -->
 	<!-- <script src="js/bootstrap.min.js"></script>-->
 </body>
-
 </html>
