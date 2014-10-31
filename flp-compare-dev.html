@@ -13,30 +13,45 @@
 	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
 	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
 	<!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 	<!-- Google Charts API -->
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 	<script>
-		google.load('visualization', '1', {
+		 google.load('visualization', '1', {
 			packages: ['table', 'corechart']
-		});
+		}); 
 		// Global vars
 		var ftdata = [];
+		var list = [];
 		
-		//Build query and pull out values to build data to send to drawchart()
-		function drawTable() {
-			// Build query - compnents end up in "query" varaible
-			var query;
-			var baseQuery = 'SELECT "Month", COUNT() FROM "1D7abkHy7QdnOtPkRhDCENIMskH-ujJVXE7UsEceq"';
-			var hotspot = document.getElementById('hotspot');
-			var hotspotValue = hotspot.value;
-			var queryAddition;
-			if (hotspot) {
-				queryAddition = " WHERE 'Hotspot' = '" + hotspotValue + "'" + " GROUP BY 'Month'";
+		function buildList() {
+			var inputElements = document.getElementsByClassName('hotspotCheckbox');
+			for(var i=0; inputElements[i]; ++i){
+			      if(inputElements[i].checked){
+			           checkedValue = inputElements[i].value;
+			           if (list.indexOf(checkedValue)) {
+				           list.push(checkedValue);
+				       }
+				       else {}
+			      }
 			}
-			var query = baseQuery + queryAddition;
+			var hotspotToDraw= list[list.length - 1];	
+			// Only run if list hotspots to query is not empty
+			if (list.length > 0) {
+				drawTable(hotspotToDraw);
+			}
+		}
+
+
+		//Build query and pull out values to build data to send to drawchart()
+		function drawTable(hotspotToDraw) {
+			console.log('First FT data' + ftdata);
+			// Build query - compnents end up in "query" varaible
+			var query ='SELECT "Month", COUNT() FROM "1D7abkHy7QdnOtPkRhDCENIMskH-ujJVXE7UsEceq"';
+			var queryAddition = " WHERE 'Hotspot' = '" + hotspotToDraw + "'" + " GROUP BY 'Month'";
+			query += queryAddition;
 			console.log(query);
 			var queryText = encodeURIComponent(query);
 			var gvizQuery = new google.visualization.Query(
@@ -49,9 +64,9 @@
 				// Conditional to determine if this is the first query/line, or if we're adding an additional query/line
 				if (ftdata.length <= 1) {
 					// Debugging conditional
-					// console.log('1st conditional fired');
-					ftdata.push(['Month', hotspotValue]);
-					for (var i = 0; i < numRows; i++) {
+					 console.log('1st conditional fired');
+					ftdata.push(['Month', hotspotToDraw]);
+					for (var i = 1; i < numRows; i++) {
 						for (var j = 0; j < numCols; j++) {
 							var rowValue = response.getDataTable(i,j);
 						}
@@ -63,19 +78,19 @@
 				else if (ftdata.length > 1) {
 					// Debugging conditional
 					// console.log('2nd conditional fired');
-					for (var i = 0; i < numRows; i++) {
+					for (i = 0; i < (numRows-1); i++) {
 						for(var j = 0; j < numCols; j++) {
 							rowValue = response.getDataTable(i,j);
 							count = rowValue.tf[i]['c'][1]['v'];
 							month = rowValue.tf[i]['c'][0]['v'];
 						}
-						ftdata[i+1].push(count)
+						//ftdata[i+1].push(count);
+						ftdata[i+1].push(count);
 					}
-					ftdata[0].push(hotspotValue)
+					ftdata[0].push(hotspotToDraw)
 				} 
 				// Debug
-				// console.log(ftdata); 
-				
+				 // console.log(ftdata); 
 				//Send formatted data to the visualization	         
 				drawChart(ftdata);
 		    });   
@@ -89,7 +104,8 @@
 		        var chart = new google.visualization.LineChart(document.getElementById('visualization'));
 		        chart.draw(data, options);
 			}
-			google.setOnLoadCallback(drawTable);
+
+			google.setOnLoadCallback(buildList);
 		</script>
 </head>
 
@@ -121,10 +137,8 @@
 		<h1>Hotspot Summary</h1>	
 		</h1>
 		<label>Month</label>
-		<select id="hotspot" name="hotspot" onchange="drawTable();">
-			<!-- <option value="">-Select One-</option> -->
+		<!-- <select id="hotspot" name="hotspot" onchange="drawTable();">
 			<option value="KEN">Kensington</option>
-			<!--<option value="JEC">Joseph E. Coleman</option> -->
 			<option value="IDAAY">Institute for the Development of African American Youth</option>
 			<option value="MER">Mercy Neighborhood Ministries</option>
 			<option value="WOL">West Oak Lane</option>
@@ -134,6 +148,20 @@
 			<option value="HH">Heavenly Hall</option>
 			<option value="VOA">Village of the Arts and Humanities</option>
 		</select>
+		-->
+			<form id="hotspot" name="hotspot" onchange="buildList();">
+			<!-- <input type="checkbox" class="hotspotCheckbox" value="">-Select One-<br /> -->
+			<input type="checkbox" class="hotspotCheckbox" value="KEN">Kensington<br />
+			<!--<input type="checkbox" class="hotspotCheckbox" value="JEC">Joseph E. Coleman<br /> -->
+			<input type="checkbox" class="hotspotCheckbox" value="IDAAY">Institute for the Development of African American Youth<br />
+			<input type="checkbox" class="hotspotCheckbox" value="MER">Mercy Neighborhood Ministries<br />
+			<input type="checkbox" class="hotspotCheckbox" value="WOL">West Oak Lane<br />
+			<input type="checkbox" class="hotspotCheckbox" value="BRL">Blackwell Regional Library<br />
+			<input type="checkbox" class="hotspotCheckbox" value="NER">Northeast Regional Library<br />
+			<input type="checkbox" class="hotspotCheckbox" value="LMB">Lillian Marrero Branch<br />
+			<input type="checkbox" class="hotspotCheckbox" value="HH">Heavenly Hall<br />
+			<input type="checkbox" class="hotspotCheckbox" value="VOA">Village of the Arts and Humanities<br />
+		</form>
 
 		<h3 id="monthlyTotal"></h3>
 		<div id="visualization"></div>
