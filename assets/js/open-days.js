@@ -56,7 +56,7 @@
                     8, /**Dec**/              
                 ]
             ];  
-            var finalArray = [ ["Month"], ["Total Visits"], ["# of Sites Open"], ["Open Days"], ["Visits per Day"] ];
+            var finalArray = [ ["Month"], ["Total Visits"], ["# of Sites Open*"], ["Open Days"], ["Avg Visits per Site"] ];
                 for (var i = 1; i < monthArray[0].length; i++) {
                     
                     var openDays = 0;
@@ -75,7 +75,7 @@
 
                         }
                      }
-                     visitorsPerday = Number((monthCount/openDays).toFixed(2));
+                     visitorsPerday = Number((monthCount/monthArray[2][i]).toFixed(2,2));
                      finalArray[0].push(monthArray[0][i]);
                      finalArray[1].push(Number(monthCount));
                      finalArray[2].push(monthArray[2][i]);
@@ -104,7 +104,7 @@ buildTable(finalArray);
                             '<td>' + finalArray[1][i] + '</td>' +
                             '<td>' + finalArray[2][i] + '</td>' + 
                             '<td>' + finalArray[3][i] + '</td>' +
-                            '<td>' + finalArray[4][i] + '</td>' +
+                            '<td>' + finalArray[4][i] + '</td>'  + 
                             '</tr>'
                             );
             }
