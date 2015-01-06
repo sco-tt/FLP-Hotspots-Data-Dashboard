@@ -24,13 +24,19 @@
 		}); 
 		// Global vars
 		var ftdata = [];
-		var list = [];
+		var ftdataLength = 0;
+
+		function drawOrErase() {
+			buildList();
+		}
 		
 		function buildList() {
+			var list = [];
 			var inputElements = document.getElementsByClassName('hotspotCheckbox');
 			for(var i=0; inputElements[i]; ++i){
 			      if(inputElements[i].checked){
 			           checkedValue = inputElements[i].value;
+			           console.log(checkedValue);
 			           if (list.indexOf(checkedValue)) {
 				           list.push(checkedValue);
 				       }
@@ -42,6 +48,8 @@
 			if (list.length > 0) {
 				drawTable(hotspotToDraw);
 			}
+			console.log('List var is ' + list);
+			console.log('htospotsToDraw var is ' + hotspotToDraw);
 		}
 
 
@@ -149,7 +157,7 @@
 			<option value="VOA">Village of the Arts and Humanities</option>
 		</select>
 		-->
-			<form id="hotspot" name="hotspot" onchange="buildList();">
+			<form id="hotspot" name="hotspot" onchange="drawOrErase();">
 			<!-- <input type="checkbox" class="hotspotCheckbox" value="">-Select One-<br /> -->
 			<input type="checkbox" class="hotspotCheckbox" value="KEN">Kensington<br />
 			<!--<input type="checkbox" class="hotspotCheckbox" value="JEC">Joseph E. Coleman<br /> -->
