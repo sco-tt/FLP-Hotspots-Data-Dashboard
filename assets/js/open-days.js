@@ -129,7 +129,7 @@ buildTable(finalArray);
             }
             drawVisualization(newOpenDays);
             drawVisualization2(newVisitsDay);
-        }
+        } 
 
         function drawVisualization(formattedArray) {
              var data = google.visualization.arrayToDataTable(formattedArray);
