@@ -104,7 +104,7 @@ function writeData(tagList, totalVisits, taggedVisits) {
 
   sortTaglist();
 
-  var ftdata = ["<table class='table table-striped'><thead><tr><th>Tag</th><th>Description</th><th>Count</th><th>%</th></tr>"];
+  var ftdata = ["<table class='table table-striped'><thead><tr><th>Tag</th><th>Description</th><th>Count</th><th>%</th></tr></thead>"];
     for (var i = 0, len = tagList.length; i < len; i++) {
       var percent = ((tagList[i][2]/taggedVisits)*100).toFixed(2);
       ftdata.push("<tr>"+
