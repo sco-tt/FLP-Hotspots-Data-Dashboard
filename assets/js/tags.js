@@ -115,8 +115,9 @@ function writeData(tagList, totalVisits, taggedVisits) {
                   "</tr>");
     }
     ftdata.push("</tbody></table>");
-      $("#ft-data").removeClass("spinning");
+    $("#ft-data").removeClass("spinning");
     document.getElementById("ft-data").innerHTML = ftdata.join("");
   }
     queryFt();
-});
+
+}); 

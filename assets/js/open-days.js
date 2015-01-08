@@ -1,3 +1,5 @@
+(function () {
+"use strict";
 
   google.load("visualization", "1", {packages: ["corechart"]});
      function initialize() {
@@ -6,42 +8,42 @@
         var encodedQuery = encodeURIComponent(query);
 
         // Construct the URL
-        var url = ['https://www.googleapis.com/fusiontables/v2/query'];
-        url.push('?sql=' + encodedQuery);
-        url.push('&key=AIzaSyAm9yWCV7JPCTHCJut8whOjARd7pwROFDQ');
-        var queryURL = url.join('');
-            url.push('&callback=?');
+        var url = ["https://www.googleapis.com/fusiontables/v2/query"];
+        url.push("?sql=" + encodedQuery);
+        url.push("&key=AIzaSyAm9yWCV7JPCTHCJut8whOjARd7pwROFDQ");
+       url.join("");
+            url.push("&callback=?");
 
 
         // Send the JSONP request using jQuery
         $.ajax({
-          url: url.join(''),
-          dataType: 'jsonp',
+          url: url.join(""),
+          dataType: "jsonp",
           success: function (data) {
-            var rows = data['rows'];
+            var rows = data.rows;
             var monthArray = [ 
                 [    
-                     'Month',  
-                     '01 - January',
-                     '02 - February',
-                     '03 - March',
-                     '04 - April',
-                     '05 - May',
-                     '06 - Jun',
-                     '07 - Jul',
-                     '08 - Aug',
-                     '09 - Sep',
-                     '10 - Oct',
-                     '11 - Nov', 
-                     '12 - Dec'
+                     "Month",  
+                     "01 - January",
+                     "02 - February",
+                     "03 - March",
+                     "04 - April",
+                     "05 - May",
+                     "06 - Jun",
+                     "07 - Jul",
+                     "08 - Aug",
+                     "09 - Sep",
+                     "10 - Oct",
+                     "11 - Nov", 
+                     "12 - Dec"
                 ],
                 
                 [
-                    'Open Days'
+                    "Open Days"
                     
                 ], 
                 
-                ['Sites Active', 
+                ["Sites Active", 
                     10, /** Jan **/
                     9, /** Feb **/ /**Jec was closed **/
                     9, /** Mar **/ /** Idaay was closed **/
@@ -91,40 +93,39 @@ buildTable(finalArray);
       }
 
         function buildTable (finalArray) {
-            var ftdata = ['<table class="table table-striped"><thead><tr>'];
-            for (var i = 0; i < finalArray.length; i++) {
-                ftdata.push('<th>' + finalArray[i][0] + '</th>'); 
+            var ftdata = ["<table class='table table-striped'><thead><tr>"];
+            for (var i = 0, len = finalArray.length; i < len; i++) {
+                ftdata.push("<th>" + finalArray[i][0] + "</th>"); 
             }
-            ftdata.push('</tr></thead><tbody>');
+            ftdata.push("</tr></thead><tbody>");
 
-            for (var i = 1; i < finalArray[0].length; i++) {
+            for (i = 1, len = finalArray[0].length; i < len; i++) {
                 ftdata.push(
-                            '<tr>' +
-                            '<td>' + finalArray[0][i] + '</td>' + 
-                            '<td>' + finalArray[1][i] + '</td>' +
-                            '<td>' + finalArray[2][i] + '</td>' + 
-                            '<td>' + finalArray[3][i] + '</td>' +
-                            '<td>' + finalArray[4][i] + '</td>'  + 
-                            '</tr>'
+                            "<tr>" +
+                            "<td>" + finalArray[0][i] + "</td>" + 
+                            "<td>" + finalArray[1][i] + "</td>" +
+                            "<td>" + finalArray[2][i] + "</td>" + 
+                            "<td>" + finalArray[3][i] + "</td>" +
+                            "<td>" + finalArray[4][i] + "</td>"  + 
+                            "</tr>"
                             );
             }
-            ftdata.push('</tbody></table>');
-            document.getElementById('ft-data').innerHTML = ftdata.join('');
+            ftdata.push("</tbody></table>");
+            document.getElementById("ft-data").innerHTML = ftdata.join("");
            formatData(finalArray); 
         }
 
         function formatData(finalArray) {
-          console.log(finalArray);
           var rawOpenDays = [finalArray[0], finalArray[3]];
           var rawVisitsDay = [finalArray[0], finalArray[4]];
           var newOpenDays = [];
           var newVisitsDay = [];
 
-            for (var i = 0; i < rawOpenDays[0].length; i++) {
-                    newOpenDays.push([rawOpenDays[0][i], rawOpenDays[1][i]])
+            for (var i = 0, len = rawOpenDays[0].length; i < len; i++) {
+                    newOpenDays.push([rawOpenDays[0][i], rawOpenDays[1][i]]);
             }
-            for (var i = 0; i < rawVisitsDay[0].length; i++) {
-                    newVisitsDay.push([rawVisitsDay[0][i], rawVisitsDay[1][i]])
+            for (i = 0, len = rawVisitsDay[0].length; i < len; i++) {
+                    newVisitsDay.push([rawVisitsDay[0][i], rawVisitsDay[1][i]]);
             }
             drawVisualization(newOpenDays);
             drawVisualization2(newVisitsDay);
@@ -133,20 +134,22 @@ buildTable(finalArray);
         function drawVisualization(formattedArray) {
              var data = google.visualization.arrayToDataTable(formattedArray);
              var dataView = new google.visualization.DataView(data);
-              dataView.setColumns([{calc: function(data, row) { return data.getFormattedValue(row, 0); }, type:'string'}, 1]);
+              dataView.setColumns([{calc: function(data, row) { return data.getFormattedValue(row, 0); }, type:"string"}, 1]);
                 var options = {
-                  domainAxis: 'category',
+                  domainAxis: "category",
                 };
-                var chart = new google.visualization.LineChart(document.getElementById('visualization'));
+                var chart = new google.visualization.LineChart(document.getElementById("visualization"));
                 chart.draw(data, options); 
       }
       function drawVisualization2(formattedArray) {
              var data = google.visualization.arrayToDataTable(formattedArray);
              var dataView = new google.visualization.DataView(data);
-              dataView.setColumns([{calc: function(data, row) { return data.getFormattedValue(row, 0); }, type:'string'}, 1]);
+              dataView.setColumns([{calc: function(data, row) { return data.getFormattedValue(row, 0); }, type:"string"}, 1]);
                 var options = {
-                  domainAxis: 'category',
+                  domainAxis: "category",
                 };
-                var chart = new google.visualization.LineChart(document.getElementById('visualization2'));
+                var chart = new google.visualization.LineChart(document.getElementById("visualization2"));
                 chart.draw(data, options); 
       }
+google.setOnLoadCallback(initialize);     
+})();
