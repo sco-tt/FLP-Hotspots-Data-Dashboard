@@ -1,4 +1,4 @@
-(function () {
+(function ($) {
 "use strict";
 
 google.load("visualization", "1",{ packages: ["corechart"] });
@@ -72,4 +72,4 @@ function drawVisualization(query, monthName) {
 
 google.setOnLoadCallback(drawTable);     
 
-})();
+})(jQuery);

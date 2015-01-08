@@ -1,3 +1,6 @@
+(function ($) {
+"use strict";
+
   google.load('visualization', '1', {
 		packages: ['corechart']
 	});
@@ -72,3 +75,4 @@
 	}
 
 	google.setOnLoadCallback(drawTable);
+})(jQuery);

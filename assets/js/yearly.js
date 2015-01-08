@@ -1,4 +1,4 @@
-(function () {
+(function ($) {
 "use strict";
 
 google.load("visualization", "1");
@@ -64,4 +64,4 @@ function drawVisualization() {
 
 google.setOnLoadCallback(drawTable);  
 
-})();
+})(jQuery);

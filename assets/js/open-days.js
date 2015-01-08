@@ -1,4 +1,4 @@
-(function () {
+(function ($) {
 "use strict";
 
   google.load("visualization", "1", {packages: ["corechart"]});
@@ -11,10 +11,9 @@
         var url = ["https://www.googleapis.com/fusiontables/v2/query"];
         url.push("?sql=" + encodedQuery);
         url.push("&key=AIzaSyAm9yWCV7JPCTHCJut8whOjARd7pwROFDQ");
-       url.join("");
-            url.push("&callback=?");
-
-
+        url.join("");
+        url.push("&callback=?");
+         
         // Send the JSONP request using jQuery
         $.ajax({
           url: url.join(""),
@@ -152,4 +151,4 @@ buildTable(finalArray);
                 chart.draw(data, options); 
       }
 google.setOnLoadCallback(initialize);     
-})();
+})(jQuery);

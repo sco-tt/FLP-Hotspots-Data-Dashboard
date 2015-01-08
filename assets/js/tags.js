@@ -1,5 +1,5 @@
-jQuery(document).ready(function($){
-  "use strict";
+(function ($) {
+"use strict";
 
   function queryFt() {
   var query = "SELECT 'Age', 'Tag1', 'Tag2', 'Tag3', 'Tag4' FROM " +
@@ -120,4 +120,4 @@ function writeData(tagList, totalVisits, taggedVisits) {
   }
     queryFt();
 
-}); 
+})(jQuery);
