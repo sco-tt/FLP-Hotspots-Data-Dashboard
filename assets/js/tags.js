@@ -89,7 +89,6 @@ function search (data_uppercase) {
 
 
 function writeData(tagList, totalVisits, taggedVisits) {
-  
 
   function sortTaglist () {
     tagList.sort(function (a, b) {
