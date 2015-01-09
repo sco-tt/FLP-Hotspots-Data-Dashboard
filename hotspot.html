@@ -51,24 +51,26 @@
 	<div class="container" role="main">
 		<h1>Hotspot Summary</h1>	
 		</h1>
+		<div class="selectors">
 		<label>Month</label>
-		<select id="month" name="month" onchange="drawTable();">
-			<option value="KEN">Kensington</option>
-			<option value="JEC">Joseph E. Coleman</option>
-			<option value="IDAAY">Institute for the Development of African American Youth</option>
-			<option value="MER">Mercy Neighborhood Ministries</option>
-			<option value="WOL">West Oak Lane</option>
-			<option value="BRL">Blackwell Regional Library</option>
-			<option value="NER">Northeast Regional Library</option>
-			<option value="LMB">Lillian Marrero Branch</option>
-			<option value="HH">Heavenly Hall</option>
-			<option value="VOA">Village of the Arts and Humanities</option>
-		</select>
-		<label>Sort By</label>
-		<select id="orderPref" onchange="drawTable()">
-			<option value="'Month'" selected="selected">Month</option>
-			<option value="Count()">Count</option>
-		</select>
+			<select id="month" name="month">
+				<option value="KEN">Kensington</option>
+				<option value="JEC">Joseph E. Coleman</option>
+				<option value="IDAAY">Institute for the Development of African American Youth</option>
+				<option value="MER">Mercy Neighborhood Ministries</option>
+				<option value="WOL">West Oak Lane</option>
+				<option value="BRL">Blackwell Regional Library</option>
+				<option value="NER">Northeast Regional Library</option>
+				<option value="LMB">Lillian Marrero Branch</option>
+				<option value="HH">Heavenly Hall</option>
+				<option value="VOA">Village of the Arts and Humanities</option>
+			</select>
+			<label>Sort By</label>
+			<select id="orderPref" onchange="drawTable()">
+				<option value="'Month'" selected="selected">Month</option>
+				<option value="Count()">Count</option>
+			</select>
+		</div>
 		<h3 id="siteName"></h3>
 		<h4 id="monthlyTotal"></h4>
 		<div id="visualization"></div>

@@ -43,8 +43,9 @@
 	  
 <div class="container" role="main">
 	<h1>Monthly Summary</h1>	
-	</h1><label>Month</label>
-      <select id="month" name="month" onchange="drawTable();">
+  <div class="selectors">
+    <label>Month</label>
+    <select id="month" name="month" >
         <option value="01 - January">January</option>
         <option value="02 - February">February</option>
         <option value="03 - March">March</option>
@@ -59,10 +60,11 @@
         <option value="12 - Dec">December</option>
       </select>
            <label>Sort By</label>
-        <select id="orderPref" onchange="drawTable()">
+      <select id="orderPref">
             <option value="'Hotspot'" selected="selected">Hotspot</option>
             <option value="Count()">Count</option>
-        </select>
+      </select>
+    </div>
     <h3 id="monthlyTotal"></h3>
     <div id="ft-data"></div>
     <div id="visualization"></div>

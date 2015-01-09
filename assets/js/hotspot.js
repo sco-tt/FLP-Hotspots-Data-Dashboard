@@ -5,6 +5,8 @@
 		packages: ['corechart']
 	});
 
+
+
 	function drawTable() {
 		// Construct query
 		//Query compnents end up in query var
@@ -73,6 +75,11 @@
 			}
 		});
 	}
-
 	google.setOnLoadCallback(drawTable);
+
+	$(".selectors").change( function () {
+		drawTable();
+	});
+
+
 })(jQuery);
