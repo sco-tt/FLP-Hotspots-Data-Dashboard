@@ -140,7 +140,10 @@ buildTable(finalArray);
                 var chart = new google.visualization.LineChart(document.getElementById("visualization"));
                 chart.draw(data, options); 
       }
-      function drawVisualization2(formattedArray) {
+    /**
+      * Leaving off for now
+
+        function drawVisualization2(formattedArray) {
              var data = google.visualization.arrayToDataTable(formattedArray);
              var dataView = new google.visualization.DataView(data);
               dataView.setColumns([{calc: function(data, row) { return data.getFormattedValue(row, 0); }, type:"string"}, 1]);
@@ -150,5 +153,7 @@ buildTable(finalArray);
                 var chart = new google.visualization.LineChart(document.getElementById("visualization2"));
                 chart.draw(data, options); 
       }
+      * 
+      */
 google.setOnLoadCallback(initialize);     
 })(jQuery);
