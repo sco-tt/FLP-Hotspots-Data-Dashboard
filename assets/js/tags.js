@@ -1,21 +1,123 @@
 (function ($) {
 "use strict";
 
-  function queryFt() {
-  var query = "SELECT 'Age', 'Tag1', 'Tag2', 'Tag3', 'Tag4' FROM " +
-  "1D7abkHy7QdnOtPkRhDCENIMskH-ujJVXE7UsEceq ORDER BY 'Age'";
+	/**
+	  * Using jQuery Event Handlers to look at the 'Hotspot' and 'FY' checkbox sets. Add/remove values to hotspotQueryParams array 
+	**/ 
+
+	var hotspotQueryParams = [[],[]];
+
+	$("#hotspot").children().children().on( "change", function() {
+	    if ($(this).is(":checked")) {
+	    	hotspotQueryParams[0].push(this.value);
+	    }
+	    else {
+	    	var index = hotspotQueryParams[0].indexOf(this.value);
+			if (index > -1) {
+				hotspotQueryParams[0].splice(index, 1);
+			}
+	    }
+	});
+
+	$("#FY").children().children().on( "change", function() {
+	    if ($(this).is(":checked")) {
+	    	hotspotQueryParams[1].push(this.value);
+	    }
+	    else {
+	    	var index = hotspotQueryParams[1].indexOf(this.value);
+			if (index > -1) {
+				hotspotQueryParams[1].splice(index, 1);
+			}
+	    }
+	});
+
+	$("#search").on("click", function() {
+		console.log(hotspotQueryParams);
+		$("#ft-data").html("");
+		
+		var selectedHotspots = "";
+		var selectedFY = "";
+		
+		if (hotspotQueryParams[0].length > 0) {
+			selectedHotspots += "(";	
+			for (var i = 0, len = hotspotQueryParams[0].length; i < len; i++) {
+				console.log(hotspotQueryParams);
+				selectedHotspots += "'" + hotspotQueryParams[0][i] + "',"; 
+			}
+			selectedHotspots = selectedHotspots.substring(0, selectedHotspots.length-1);
+			selectedHotspots += ")";
+		}
+		else { }
+
+		if (hotspotQueryParams[1].length > 0) {
+			selectedFY += "(";
+			var selectedFY = "(";
+			for (var i = 0, len = hotspotQueryParams[1].length; i < len; i++) {
+				console.log(hotspotQueryParams);
+				selectedFY += hotspotQueryParams[1][i]; 
+			}
+			selectedFY = selectedFY.substring(0, selectedFY.length-1) + ")";	
+		}
+		else { }
+
+		queryBuilder(selectedHotspots, selectedFY);
+	})
+
+	//function readForms () 
+
+	function queryBuilder(selectedHotspots, selectedFY) {
+		var hotspotsLength = selectedHotspots.length;
+		var fyLength = selectedFY.length;
+		
+		var queryAddition;
+		
+		if (!(selectedHotspots) && !(selectedFY)) { //none
+			queryAddition = "";
+		}
+		if ((selectedHotspots) && (selectedFY)) { //both
+			queryAddition = " WHERE 'Hotspot' IN " + selectedHotspots + " AND 'Month' IN " + selectedFY + "";
+		}
+		if ((selectedHotspots) && !(selectedFY)) { //only hotspots
+			queryAddition = " WHERE 'Hotspot' IN " + selectedHotspots + "";
+		}
+		if (!(selectedHotspots) && (selectedFY)) { //only FY
+			queryAddition = " WHERE 'Month' IN " + selectedFY + "";
+		}
+		queryFt(queryAddition)
+	}
+	
+
+
+
+  function queryFt(queryAddition) {
+  var baseQuery = "SELECT 'Age', 'Tag1', 'Tag2', 'Tag3', 'Tag4' FROM " +
+  "1D7abkHy7QdnOtPkRhDCENIMskH-ujJVXE7UsEceq";
+
+
+	var query = baseQuery + queryAddition;
+
+console.log(query)
   var encodedQuery = encodeURIComponent(query);
 
   // Construct the URL
   var url = ["https://www.googleapis.com/fusiontables/v2/query"];
   url.push("?sql=" + encodedQuery);
   url.push("&key=AIzaSyAm9yWCV7JPCTHCJut8whOjARd7pwROFDQ");
+
+	/** 
+	* Development: Write out query
+	**/
+	var queryURL = url.join('');
+	var queryLink = document.getElementById('query');
+	queryLink.innerHTML = "<a href=" + queryURL + ">" + queryURL + "</a>";  
+
   url.push("&callback=?");
-    $("#ft-data").addClass("spinning");
+
+  $("#ft-data").addClass("spinning");
 
   $.ajax({
     url: url.join(""),
-    dataType: "jsonp",
+	dataType: "jsonp",
     success: function (data) {
        uppercase(data);
     } 
@@ -102,7 +204,7 @@ function writeData(tagList, totalVisits, taggedVisits) {
     });
   }
 
-  sortTaglist();
+  sortTaglist();	
 
   var ftdata = ["<table class='table table-striped'><thead><tr><th>Tag</th><th>Description</th><th>Count</th><th>%</th></tr></thead>"];
     for (var i = 0, len = tagList.length; i < len; i++) {
@@ -118,6 +220,5 @@ function writeData(tagList, totalVisits, taggedVisits) {
     $("#ft-data").removeClass("spinning");
     document.getElementById("ft-data").innerHTML = ftdata.join("");
   }
-    queryFt();
 
 })(jQuery);
