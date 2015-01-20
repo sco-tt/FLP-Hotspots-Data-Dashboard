@@ -77,3 +77,21 @@
     box-shadow: 15px -15px #dfdfdf, 15px 15px #4f4d49, -15px 15px #dfdfdf, -15px -15px #4f4d49;
   }
 }
+
+
+.community input[type=checkbox], 
+.community label {
+  float: right;
+}
+.community input[type=checkbox] {
+  clear: right;
+  margin-left: 1.5em;
+}
+
+.branch input[type=checkbox],
+form#FY input[type=checkbox] {
+  margin-right: 1.5em;
+}
+ {
+ m 
+}
