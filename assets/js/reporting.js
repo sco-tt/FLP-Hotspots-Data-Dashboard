@@ -84,7 +84,8 @@
 		if (!(selectedHotspots) && (selectedFY)) { //only FY
 			queryAddition = " WHERE 'Month' IN " + selectedFY + "";
 		}
-		queryFt(queryAddition)
+
+	queryFt(queryAddition)
 	}
 	
 
@@ -136,7 +137,7 @@ function search (data_uppercase) {
                     ["Education", 0, [["HW!"], ["HED!"], ["ODB!"]]],
                     ["Social Networking",0,[["SNW!"]]],  
                     ["Email",0, [["EML!"]]],
-                    ["General Browsing", 0, [["ADO!"], ["GAM!"], ["GDT!"], ["SRC!"]]],
+                    ["General Browsing", 0, [["ADO!"], ["GAM!"], ["GDT!"], ["SRC!"]]]	,
                     ["Faxing (Other)", 0, [["FAX!"]]],
                     ["Word processing!",0,[["DOC!"]]] 
                   ]
@@ -164,8 +165,8 @@ function search (data_uppercase) {
 	      		 (arr[3].indexOf(ref) != -1) ||
 	      		 (arr[4].indexOf(ref) != -1)
 	  		 ){
-			    categoryMatch++;
-	  		console.log("Row # " + i + "content: " + arr + " match with " + ref + " of " + tagList[j][0] + ", new count " + (tagList[j][1]+1));
+		    categoryMatch++;
+	  		//console.log("Row # " + i + "content: " + arr + " match with " + ref + " of " + tagList[j][0] + ", new count " + (tagList[j][1]+1));
 	  		}
 	      }
 	      if (categoryMatch > 0) {
