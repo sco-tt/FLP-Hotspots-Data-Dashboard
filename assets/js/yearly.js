@@ -4,9 +4,20 @@
 google.load("visualization", "1");
 
 function drawTable() {
+  var year = document.getElementById("year").value;
+  console.log(year);
  		// Construct query
  		//Query compnents end up in query
-  var query = 'SELECT "Month", COUNT() FROM "1D7abkHy7QdnOtPkRhDCENIMskH-ujJVXE7UsEceq" GROUP BY "Month" ORDER BY "Month"';
+  var basequery = 'SELECT "Month", COUNT() FROM "1D7abkHy7QdnOtPkRhDCENIMskH-ujJVXE7UsEceq"';
+  if (year) {
+    var yearToggle = 'WHERE "Year" = ' + year + '"'; 
+  }
+  else {
+    yearToggle = '';
+  }
+
+  var queryOrder = 'GROUP BY "Month" ORDER BY "Month"';
+  var query = basequery + yearToggle + queryOrder;
   var queryText = encodeURIComponent(query);
   var gvizQuery = new google.visualization.Query(
     "https://www.google.com/fusiontables/gvizdata?tq="  + queryText);
@@ -37,13 +48,12 @@ function drawTable() {
 
     ftdata.push("</tbody></table>");
     
-    document.getElementById("yearlyTotal").innerHTML = "2014 Yearly Total: " + sum;  
+    document.getElementById("yearlyTotal").innerHTML = year + " Yearly Total: " + sum;  
     document.getElementById("ft-data").innerHTML = ftdata.join("");
   });
-  drawVisualization(); 
+  drawVisualization(query, year); 
 }
-function drawVisualization() {
-  var query = 'SELECT "Month", COUNT() FROM "1D7abkHy7QdnOtPkRhDCENIMskH-ujJVXE7UsEceq GROUP BY "Month" ORDER BY "Month"';
+function drawVisualization(query) {
     google.visualization.drawChart({
       containerId: "visualization",
       dataSourceUrl: "https://www.google.com/fusiontables/gvizdata?tq=",
@@ -51,7 +61,7 @@ function drawVisualization() {
       chartType: "LineChart",
       options: {
           label: "# of Visits",
-          title: "Hotspot Usage in 2014",
+          title: "Hotspot Usage by Month",
         vAxis: {
           title: "Hotspot"
         },
@@ -63,5 +73,9 @@ function drawVisualization() {
   }
 
 google.setOnLoadCallback(drawTable);  
+
+$(".selectors").change( function () {
+  drawTable();
+});
 
 })(jQuery);
