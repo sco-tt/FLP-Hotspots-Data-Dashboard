@@ -66,6 +66,7 @@
 	//function readForms () 
 
 	function queryBuilder(selectedHotspots, selectedFY) {
+    var year = document.getElementById("year").value;
 		var hotspotsLength = selectedHotspots.length;
 		var fyLength = selectedFY.length;
 		
@@ -75,13 +76,13 @@
 			queryAddition = "";
 		}
 		if ((selectedHotspots) && (selectedFY)) { //both
-			queryAddition = " WHERE 'Hotspot' IN " + selectedHotspots + " AND 'Month' IN " + selectedFY + "";
+			queryAddition = " WHERE 'Year' = " + year + " AND 'Hotspot' IN " + selectedHotspots + " AND 'Month' IN " + selectedFY + "";
 		}
 		if ((selectedHotspots) && !(selectedFY)) { //only hotspots
-			queryAddition = " WHERE 'Hotspot' IN " + selectedHotspots + "";
+			queryAddition = " WHERE 'Year' = " + year + " AND 'Hotspot' IN " + selectedHotspots + "";
 		}
 		if (!(selectedHotspots) && (selectedFY)) { //only FY
-			queryAddition = " WHERE 'Month' IN " + selectedFY + "";
+			queryAddition = " WHERE 'Year' = " + year + " AND 'Month' IN " + selectedFY + "";
 		}
 		queryFt(queryAddition)
 	}
@@ -109,7 +110,7 @@ console.log(query)
 	**/
 	var queryURL = url.join('');
 	var queryLink = document.getElementById('query');
-	queryLink.innerHTML = "<a href=" + queryURL + ">" + queryURL + "</a>";  
+	queryLink.innerHTML = "<a href=" + queryURL + ">View Query</a>";  
 
   url.push("&callback=?");
 
