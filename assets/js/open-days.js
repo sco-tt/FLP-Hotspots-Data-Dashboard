@@ -23,10 +23,10 @@
             var monthArray = [ 
                 [    
                      "Month",  
-                     "01 - January",
-                     "02 - February",
-                     "03 - March",
-                     "04 - April",
+                     "01 - Jan",
+                     "02 - Feb",
+                     "03 - Mar",
+                     "04 - Apr",
                      "05 - May",
                      "06 - Jun",
                      "07 - Jul",
