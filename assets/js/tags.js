@@ -141,6 +141,7 @@ function uppercase (data) {
 
 
 function search (data_uppercase) {
+  console.log(data_uppercase);
    var tagList = [
                     ["SNW!","Social Networking",0],  
                     ["EML!","Email",0],

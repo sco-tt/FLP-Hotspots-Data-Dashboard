@@ -63,28 +63,31 @@
 	})
 
 	/**
-	  * Build our query url depending on the parameters that are checked in the form
+	 * Build our query url depending on the parameters that are checked in the form
 	**/
 
 	function queryBuilder(selectedHotspots, selectedFY) {
+		clearTable();
+		// We'll always include a year query; too slow otherwise
+		var year = document.getElementById("year").value;
 		var hotspotsLength = selectedHotspots.length;
 		var fyLength = selectedFY.length;
 		
 		var queryAddition;
 		
 		if (!(selectedHotspots) && !(selectedFY)) { //none
-			queryAddition = "";
+			queryAddition = " WHERE 'Year' = " + year;
 		}
 		if ((selectedHotspots) && (selectedFY)) { //both
-			queryAddition = " WHERE 'Hotspot' IN " + selectedHotspots + " AND 'Month' IN " + selectedFY + "";
+			queryAddition = " WHERE 'Year' = " + year + " AND 'Hotspot' IN " + selectedHotspots + " AND 'Month' IN " + selectedFY + "";
 		}
 		if ((selectedHotspots) && !(selectedFY)) { //only hotspots
-			queryAddition = " WHERE 'Hotspot' IN " + selectedHotspots + "";
+			queryAddition = " WHERE 'Year' = " + year + " AND 'Hotspot' IN " + selectedHotspots + "";
 		}
 		if (!(selectedHotspots) && (selectedFY)) { //only FY
-			queryAddition = " WHERE 'Month' IN " + selectedFY + "";
+			queryAddition = " WHERE 'Year' = " + year + " AND 'Month' IN " + selectedFY + "";
 		}
-
+		//console.log(queryAddition);
 	queryFt(queryAddition)
 	}
 	
@@ -101,7 +104,7 @@
 		var url = ["https://www.googleapis.com/fusiontables/v2/query"];
 		url.push("?sql=" + encodedQuery);
 		url.push("&key=AIzaSyAm9yWCV7JPCTHCJut8whOjARd7pwROFDQ");
-		//Devel: write out query
+		//Development: write out query
 		var queryURL = url.join('');
 		var queryLink = document.getElementById('query');
 		queryLink.innerHTML = "<a href=" + queryURL + ">Link to Query</a>";  
@@ -111,7 +114,12 @@
 			url: url.join(""),
 			dataType: "jsonp",
 			success: function (data) {
-			   uppercase(data);
+				if (data.rows) {
+					uppercase(data);
+				}
+				else {
+					writeError();
+				}
 			} 
 		}); 
 	}
@@ -120,7 +128,7 @@ function uppercase (data) {
   var data_uppercase = [];
   for (var i = 0, len = data.rows.length; i < len; i++) {
     var row = data.rows[i];
-    data_uppercase.push([row[0], 
+    data_uppercase.push([row[0].toUpperCase(), 
                         row[1].toUpperCase(),
                         row[2].toUpperCase(),
                         row[3].toUpperCase(),
@@ -132,6 +140,7 @@ function uppercase (data) {
 
 
 function search (data_uppercase) {
+	//Tags we are looking for
 	var tagList = [
                     ["Job Searching",0, [["JSE!"], ["JOB!"], ["RES!"], ["APP!"], ["ENT!"], ["INT!"], ["COV!"]]],
                     ["Education", 0, [["HW!"], ["HED!"], ["ODB!"]]],
@@ -141,17 +150,29 @@ function search (data_uppercase) {
                     ["Faxing (Other)", 0, [["FAX!"]]],
                     ["Word processing!",0,[["DOC!"]]] 
                   ]
-
-	var totalVisits = 0;
-	var taggedVisits = 0;
+	//Array to count different types of visits
+    var visits = {
+    	total: 0, 
+    	tagged: 0, 
+    	youth: 0, 
+    	adult: 0
+    	}
 
 	for (var i = 0, len = data_uppercase.length; i < len; i++) {
-	  totalVisits++;
+	  visits.total++;
 	  var arr = data_uppercase[i];
+
+	  if (arr[0] == "CHILD" || arr[0] == "TEEN") {
+	  	visits.youth++;
+	  }
+
+	  else if  (arr[0] == "ADULT" || arr[0] == "SENIOR") {
+	  	visits.adult++;
+	  }
 	 
 	 //Check if at least of one of our tag columns has a value and logged tag visits
 	  if ( (arr[1]) || (arr[2]) || (arr[3]) || (arr[4]) ) {
-	    taggedVisits++;
+	    visits.tagged++;
 	  }
 	  
 	  //Test each row against our index and write to the array, acting as a count
@@ -174,50 +195,67 @@ function search (data_uppercase) {
 	      }
 	  }
 	}
-	var percent = ((taggedVisits/totalVisits)*100).toFixed(2);
+	var percent = ((visits.tagged/visits.total)*100).toFixed(2);
 
-  console.log(tagList);
-  console.log("Total Visits: " + totalVisits + "\nTagged Visits" + taggedVisits);
-  writeData(tagList, totalVisits, taggedVisits, percent);
-
+	//console.log(tagList);
+	//console.log("Total Visits: " + visits['total'] + "\nTagged Visits" + visits['tagged']);
+	writeData(tagList, visits, percent);
+	console.log("Youth Visits: " + visits['youth']);
+	console.log("Adult Visits: " + visits['adult']);
 }
 
 
-function writeData(tagList, totalVisits, taggedVisits, percent) {
-	console.log(percent);
-	$('span#totalVisits').html(totalVisits);
-	$('span#taggedVisits').html(taggedVisits);
+function writeData(tagList, visits, percent) {
+	$('span#totalVisits').html(visits.total);
+	$('span#taggedVisits').html(visits.tagged);
+	$('span#youthVisits').html(visits.youth);
+	$('span#adultVisits').html(visits.adult);
 	$('span#percentTagged').html(percent+"%");
 
-
-
-  function sortTaglist () {
-    tagList.sort(function (a, b) {
-      if (b[2] > a[2]) {
-        return 1;
-      }
-      if (b[2] < a[2]) {
-        return -1;
-      }
-      return 0;
-    });
-  }
+	function sortTaglist () {
+	tagList.sort(function (a, b) {
+	  if (b[2] > a[2]) {
+	    return 1;
+	  }
+	  if (b[2] < a[2]) {
+	    return -1;
+	  }
+	  return 0;
+	});
+	}
 
   sortTaglist();	
 
   var ftdata = ["<table class='table table-striped'><thead><tr><th>Reporting Category</th><th>Tags</th><th>Count</th><th>%</th></tr></thead>"];
     for (var i = 0, len = tagList.length; i < len; i++) {
-      var percent = ((tagList[i][2]/taggedVisits)*100).toFixed(2);
-      ftdata.push("<tr>"+
+      var percent = ((tagList[i][2]/visits['tagged'])*100).toFixed(2);
+      ftdata.push(	"<tr>"+
                     "<td>" + tagList[i][0] + "</td>" +
                     "<td>" + tagList[i][2] + "</td>" +
                     "<td>" + tagList[i][1] + "</td>" +
-                    "<td>" + (((tagList[i][1]/taggedVisits)*100).toFixed(2)) + "</td>" +
-                  "</tr>");
+                    "<td>" + (((tagList[i][1]/visits['tagged'])*100).toFixed(2)) + "</td>" +
+                  	"</tr>");
     }
     ftdata.push("</tbody></table>");
     $("#ft-data").removeClass("spinning");
     document.getElementById("ft-data").innerHTML = ftdata.join("");
   }
+
+/**
+ * Functions for clear data and errors
+ */
+
+
+function clearTable () {
+	$('span#totalVisits').html("");
+	$('span#taggedVisits').html("");
+	$('span#percentTagged').html("");
+}
+
+function writeError() {
+	document.getElementById("ft-data").innerHTML = "<h2>There is an error in your query. Please try again.</h2>";
+	$("#ft-data").removeClass("spinning");
+}
+
 
 })(jQuery);

@@ -42,6 +42,12 @@
     <div class="container" role="main">      
       <div id="query"></div>
 
+      <label>Year</label>
+      <select id="year" name="year" >
+          <option value="2014">2014</option>
+          <option value="2015">2015</option>
+      </select>  
+
       <div class="row show-grid">
         <div class="col-md-8">
           <form id="hotspot" name="hotspot">
@@ -61,8 +67,9 @@
       <div class="col-md-4">
         <form id="FY" name="FY">
           <legend>FY Quarter</legend>
-            <div><input type="checkbox" name="Q1" value="'07 - Jul', '08 - Aug', 'O9 - Sep',"><label for="KEN">Q1</label></div>
-            <div><input type="checkbox" name="Q1" value="'10 - Oct', '11 - Nov', '12 - Dec',"><label for="KEN">Q2</label></div>
+            <div><input type="checkbox" name="Q1" value="'07 - Jul', '08 - Aug', 'O9 - Sep',"><label for="Q1">Q1</label></div>
+            <div><input type="checkbox" name="Q2" value="'10 - Oct', '11 - Nov', '12 - Dec',"><label for="Q2">Q2</label></div>
+              <div><input type="checkbox" name="Q3" value="'01 - Jan', '02 - Feb', '03 - Mar',"><label for="Q3">Q3</label></div>
         </form>
       </div>
     </div>
@@ -71,16 +78,24 @@
       <div id="query"></div>
       <div class="overview">
         <div>
-        <span class="visitsLabel">Total Visits: </span>
-        <span id="totalVisits"></span>
+          <span class="visitsLabel">Total Visits: </span>
+          <span id="totalVisits"></span>
         </div>
         <div>
-        <span class="visitsLabel">Tagged Visits: </span>
-        <span id="taggedVisits"></span>
+          <span class="youthVisitsLabel">Youth Visits: </span>
+          <span id="youthVisits"></span>
         </div>
         <div>
-        <span id="percent">% of Visits Tagged: </span>
-        <span id="percentTagged"></span>
+          <span class="adultVisitsLabel">Adult Visits: </span>
+          <span id="adultVisits"></span>
+        </div>
+        <div>
+          <span class="visitsLabel">Tagged Visits: </span>
+          <span id="taggedVisits"></span>
+        </div>
+        <div>
+          <span id="percent">% of Visits Tagged: </span>
+          <span id="percentTagged"></span>
         </div>
       </div>
 
